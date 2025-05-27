@@ -70,6 +70,7 @@ int main() {
     }
     case Task::task4: {
         ElGamal();
+        cout << "Загляните в input.txt и output.txt" <<endl;
         break;
     }
     case Task::task5: {
