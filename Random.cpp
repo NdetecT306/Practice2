@@ -1,7 +1,3 @@
-#include <random>
-#include <algorithm>
-#include <numeric>
-#include <chrono>
 #include "headrand.h"
 using namespace std;
 int RandomNumbers(int start, int end){
