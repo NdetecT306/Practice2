@@ -1,5 +1,8 @@
 #include<vector>
 #include<string>
+#include<math.h>
+#include<iostream>
+#include<algorithm>
 using namespace std;
 vector<int> continued_fraction(double x, int iterations);
 vector<int> primeFactors(int n);
