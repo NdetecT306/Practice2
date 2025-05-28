@@ -2,7 +2,9 @@
 #include <iostream>
 #include "header.h"
 #include "headrand.h"
+#include "headvec.h"
 using namespace std;
+
 bool prostota(int p){
     if (p < 2){
         return false;
@@ -16,13 +18,13 @@ bool prostota(int p){
 }
 int BinCheck(int a, int x, int p){
     int result = 1;
-    a %= p;
+    int b = a % p;
     while (x > 0){
         if (x % 2 == 1){ 
-            result = (result * a) % p;
+            result = (result * b) % p;
         }
         x = x >> 1;
-        a = (a * a) % p;
+        b = (b * b) % p;
     }
     return result;
 }
@@ -37,7 +39,7 @@ int Euclidean(int a, int b, int &u, int &v) {
     u = y1;
     v = x1 - (a / b) * y1;
     return d;
-  }
+}
 int FindAnswer(int &c, int &m){
     try {
         cout << "Введите c: ";
