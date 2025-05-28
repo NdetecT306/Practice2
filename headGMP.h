@@ -4,6 +4,11 @@
 #include <numeric>
 #include <chrono>
 #include <gmpxx.h>
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
 using namespace std;
 void RandomNumbers_gmp(mpz_t result, mpz_t start, mpz_t end);
 void findPrimitiveRoot(mpz_t result, mpz_t p);
