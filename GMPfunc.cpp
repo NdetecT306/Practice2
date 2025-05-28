@@ -1,17 +1,38 @@
-#include <math.h>
-#include <random>
-#include <algorithm>
-#include <numeric>
-#include <chrono>
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <gmp.h>
-#include <gmpxx.h>
 #include "header.h"
 #include "headGMP.h"
 using namespace std;
+bool prostota_gmp(mpz_t p) {
+    int reps = 100; 
+    if (mpz_cmp_ui(p, 2) < 0) {
+      return false; 
+    }
+    if (mpz_cmp_ui(p, 2) == 0 || mpz_cmp_ui(p, 3) == 0) {
+      return true; 
+    }
+    if (mpz_odd_p(p) == 0) {
+      return false; 
+    }
+    int result = mpz_probab_prime_p(p, reps);
+    return (result > 0);
+}
+void Bin(mpz_t result, mpz_t a, mpz_t x, mpz_t p) {
+    mpz_t b;
+    mpz_init(b);
+    mpz_mod(b, a, p);  
+    mpz_set_ui(result, 1); 
+    mpz_t temp_x;
+    mpz_init(temp_x);
+    mpz_set(temp_x, x);
+    while (mpz_cmp_ui(temp_x, 0) > 0) { 
+        if (mpz_odd_p(temp_x)) { 
+            mpz_mul(result, result, b); 
+            mpz_mod(result, result, p);  
+        }
+        mpz_tdiv_q_2exp(temp_x, temp_x, 1); 
+        mpz_mul(b, b, b);  
+        mpz_mod(b, b, p);  
+    }
+}
 void RandomNumbers_gmp(mpz_t result, mpz_t start, mpz_t end) {
     mpz_t range;
     mpz_init(range);
@@ -57,7 +78,6 @@ void findPrimitiveRoot(mpz_t result, mpz_t p) {
         mpz_clear(temp);
         if (mpz_cmp(i, n) > 0)
             break;
-
     }
     mpz_t a;
     mpz_init_set_ui(a, 2);
@@ -128,14 +148,12 @@ string Decrypt(const vector<pair<mpz_class, mpz_class>>& ciphertext, mpz_t x, mp
     mpz_clear(a_temp);  
     return decryptedText;
 }
-
 int ElGamal_gmp() {
     mpz_t p, g, bob_x, bob_y;
     mpz_init(p);
     mpz_init(g);
     mpz_init(bob_x);
     mpz_init(bob_y);
-
     mpz_t temp_min, temp_max;
     mpz_init_set_ui(temp_min, 100000);
     mpz_init_set_ui(temp_max, 50000000);
@@ -221,36 +239,5 @@ int ElGamal_gmp() {
     mpz_clear(bob_y);
     return 0;
 }
-bool prostota_gmp(mpz_t p) {
-    int reps = 100; 
-    if (mpz_cmp_ui(p, 2) < 0) {
-      return false; 
-    }
-    if (mpz_cmp_ui(p, 2) == 0 || mpz_cmp_ui(p, 3) == 0) {
-      return true; 
-    }
-    if (mpz_odd_p(p) == 0) {
-      return false; 
-    }
-    int result = mpz_probab_prime_p(p, reps);
-    return (result > 0);
-}
-void Bin(mpz_t result, mpz_t a, mpz_t x, mpz_t p) {
-    mpz_t b;
-    mpz_init(b);
-    mpz_mod(b, a, p);  
-    mpz_set_ui(result, 1); 
-    mpz_t temp_x;
-    mpz_init(temp_x);
-    mpz_set(temp_x, x);
-    while (mpz_cmp_ui(temp_x, 0) > 0) { 
-        if (mpz_odd_p(temp_x)) { 
-            mpz_mul(result, result, b); 
-            mpz_mod(result, result, p);  
-        }
-        mpz_tdiv_q_2exp(temp_x, temp_x, 1); 
-        mpz_mul(b, b, b);  
-        mpz_mod(b, b, p);  
-    }
-}
+
 
