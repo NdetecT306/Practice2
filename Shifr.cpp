@@ -1,11 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <math.h>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <gmp.h>
-#include <map>
 #include "header.h"
 #include "headvec.h"
 #include "headshif.h"
