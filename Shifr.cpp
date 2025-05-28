@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <gmp.h>
 #include <map>
 #include "header.h"
 #include "headvec.h"
@@ -16,12 +17,12 @@ pair<int, int> elGamalEncrypt(int message, int g, int mitm_y, int p) {
     return {a, b};
 }
 int ElGamal() {
-    int p = RandomNumbers(100000, 5000000);
+    int p = RandomNumbers(1000, 50000);
     while (!prostota(p)) {
-        p = RandomNumbers(10000, 5000000);
+        p = RandomNumbers(1000, 50000);
     }
     int g = generatePrimitiveRoot(p);
-    while(g==-1){ 
+    while (g == -1) {
         g = generatePrimitiveRoot(p);
     }
     string myText;
@@ -32,26 +33,24 @@ int ElGamal() {
     }
     string line;
     while (getline(inputFile, line)) {
-        myText += line + "\n"; 
+        myText += line + "\n";
     }
     inputFile.close();
     if (!myText.empty() && myText.back() == '\n') {
         myText.pop_back();
     }
-    int bob_x = RandomNumbers(2, p - 1); 
-    int bob_y = BinCheck(g, bob_x, p); 
-    int alice_x = RandomNumbers(2, p - 1); 
+    int bob_x = RandomNumbers(2, p - 1);
+    int bob_y = BinCheck(g, bob_x, p);
     vector<pair<int, int>> ciphertext;
     string encryptedTextString;
     for (unsigned char c : myText) {
-        int m = c;
+        int m = static_cast<int>(c);
         int k = RandomNumbers(2, p - 2);
         int a = BinCheck(g, k, p);
-        int b = (m * BinCheck(bob_y, k, p)) % p;
+        int b = ((m * BinCheck(bob_y, k, p)) % p); 
         encryptedTextString += "(" + to_string(a) + ", " + to_string(b) + ") ";
         ciphertext.push_back({ a, b });
     }
-    cout << endl;
     string decryptedText = Decrypt(ciphertext, bob_x, p);
     ofstream outputFile("output.txt");
     if (!outputFile.is_open()) {
@@ -86,9 +85,9 @@ int meetInTheMiddleAttack(int p, int g, int y){
 }
 int YouNotInSafe(){
     string plaintext;
-    int p = RandomNumbers(100000, 5000000);
+    int p = RandomNumbers(1000, 50000);
     while (!prostota(p)) {
-        p = RandomNumbers(100000, 5000000);
+        p = RandomNumbers(1000, 50000);
     }
     int g = generatePrimitiveRoot(p);
     while(g==-1) {
