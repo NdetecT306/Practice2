@@ -1,8 +1,5 @@
 #include <iostream>
-#include <algorithm>
 #include <limits>
-#include <gmp.h>
-#include <gmpxx.h>
 #include "headGMP.h"
 #include "header.h"
 #include "headvec.h"
@@ -61,7 +58,10 @@ int main() {
         } catch (const runtime_error& error) {
             cerr << "Ошибка ввода: " << error.what() << " не число." << endl;
             cin.clear();
-            mpz_clear(a);mpz_clear(x);mpz_clear(p);mpz_clear(result);
+            mpz_clear(a);
+            mpz_clear(x);
+            mpz_clear(p);
+            mpz_clear(result);
             return 1;
         }
         if (!prostota_gmp(p)) cout << "p - составное\n";
