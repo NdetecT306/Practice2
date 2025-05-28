@@ -85,6 +85,3 @@ bool Primitive(int g, int p){
     }
     return true;
 }
-
-
-
