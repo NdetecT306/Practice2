@@ -1,10 +1,7 @@
-#include <math.h>
-#include <iostream>
 #include "header.h"
 #include "headrand.h"
 #include "headvec.h"
 using namespace std;
-
 bool prostota(int p){
     if (p < 2){
         return false;
