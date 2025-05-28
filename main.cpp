@@ -1,20 +1,22 @@
 #include <iostream>
 #include <algorithm>
 #include <limits>
+#include <gmp.h>
+#include <gmpxx.h>
+#include "headGMP.h"
 #include "header.h"
 #include "headvec.h"
 #include "headrand.h"
 #include "headshif.h"
 using namespace std;
-
 enum class Task {
-    task1 = 1,
-    task2,
-    task3,
-    task4,
-    task5,
-    task6,
-    task7,
+    FermaCheck = 1,
+    Eucklid_1,
+    Eucklid_d,
+    ShifrElGamal,
+    Equation,
+    Errors,
+    Letter,
     invalid
 };
 Task getTaskFromInput() {
@@ -22,13 +24,13 @@ Task getTaskFromInput() {
     cout << "Выберите номер задания: ";
     cin >> numberOper;
     switch (numberOper) {
-    case 1: return Task::task1;
-    case 2: return Task::task2;
-    case 3: return Task::task3;
-    case 4: return Task::task4;
-    case 5: return Task::task5;
-    case 6: return Task::task6;
-    case 7: return Task::task7;
+    case 1: return Task::FermaCheck;
+    case 2: return Task::Eucklid_1;
+    case 3: return Task::Eucklid_d;
+    case 4: return Task::ShifrElGamal;
+    case 5: return Task::Equation;
+    case 6: return Task::Errors;
+    case 7: return Task::Letter;
     default: return Task::invalid;
     }
 }
@@ -36,44 +38,72 @@ int main() {
     setlocale(LC_ALL, "rus");
     Task selectedTask = getTaskFromInput();
     switch (selectedTask) {
-    case Task::task1: {
-        int a, x, p;
+    case Task::FermaCheck: {
+        mpz_t a, x, p, result;
+        mpz_init(a);
+        mpz_init(x);
+        mpz_init(p);
+        mpz_init(result);
         try {
+            cin.ignore();
             cout << "Введите основание a: ";
-            if (!(cin >> a)) throw runtime_error("a");
+            string a_str;
+            if (!getline(cin, a_str)) throw runtime_error("a");
+            if (mpz_set_str(a, a_str.c_str(), 10) != 0) throw runtime_error("a");
             cout << "Введите степень x: ";
-            if (!(cin >> x)) throw runtime_error("x");
+            string x_str;
+            if (!getline(cin, x_str)) throw runtime_error("x");
+            if (mpz_set_str(x, x_str.c_str(), 10) != 0) throw runtime_error("x");
             cout << "Введите p: ";
-            if (!(cin >> p)) throw runtime_error("p");
+            string p_str;
+            if (!getline(cin, p_str)) throw runtime_error("p");
+            if (mpz_set_str(p, p_str.c_str(), 10) != 0) throw runtime_error("p");
         } catch (const runtime_error& error) {
             cerr << "Ошибка ввода: " << error.what() << " не число." << endl;
             cin.clear();
+            mpz_clear(a);mpz_clear(x);mpz_clear(p);mpz_clear(result);
             return 1;
         }
-        (!prostota(p)) ? cout << "p - простое\n" : cout << "p - составное\n";
-        if (a >= 1 && (a % p != 0) && (x == p - 1) && prostota(p)) cout << "Теорема Ферма выполняется" << endl;
+        if (!prostota_gmp(p)) cout << "p - составное\n";
+        else cout << "p - простое\n";
+        mpz_t p_minus_1, a_mod_p, one;
+        mpz_init(p_minus_1);
+        mpz_sub_ui(p_minus_1, p, 1); 
+        mpz_init(a_mod_p);
+        mpz_mod(a_mod_p, a, p); 
+        mpz_init_set_ui(one, 1);
+        if (mpz_cmp(a, one)>=0 && mpz_cmp_ui(a_mod_p, 0)!=0 && mpz_cmp(x, p_minus_1)==0 && prostota_gmp(p)) cout << "Теорема Ферма выполняется" << endl;
         else cout << "Теорема Ферма НЕ выполняется" << endl;
-        cout << "Проверка бинарным способом: " << BinCheck(a, x, p) << endl;
+        mpz_clear(one);
+        Bin(result, a, x, p);
+        cout << "Проверка бинарным способом: ";
+        gmp_printf("%Zd\n", result);
+        mpz_clear(a);mpz_clear(x);
+        mpz_clear(p);
+        mpz_clear(result);
+        mpz_clear(p_minus_1);
+        mpz_clear(a_mod_p);
         break;
     }
-    case Task::task2: {
+    case Task::Eucklid_1: {
         int c, m;
         int d = FindAnswer(c, m);
         if (d != -1) cout << c << "*" << d << " mod " << m << " =  1" << endl;
         break;
     }
-    case Task::task3: {
+    case Task::Eucklid_d: {
         int c, m;
         int d = FindAnswer(c, m);
         if (d != -1) cout << c << "^(-1) mod " << m << " = " << d << endl;
         break;
     }
-    case Task::task4: {
+    case Task::ShifrElGamal: {
         ElGamal();
-        cout << "Загляните в input.txt и output.txt" <<endl;
+        //ElGamal_gmp();
+        cout << "Взгляните в input.txt и output.txt" << endl;
         break;
     }
-    case Task::task5: {
+    case Task::Equation: {
         LineFrac();
         int a = 1256, b = 847, d = 119;
         cout << "Решение уравнения " << a << "a + " << b << "b = " << d << ":" << endl;
@@ -83,12 +113,12 @@ int main() {
         else cout << "x = " << u * (d / res) << ", y = " << v * (d / res) << endl;
         break;
     }
-    case Task::task6: {
+    case Task::Errors: {
         YouNotInSafe();
         MITM();
         break;
     }
-    case Task::task7: {
+    case Task::Letter: {
         cout << "Сообщение лежит в отчете." << endl;
         break;
     }
