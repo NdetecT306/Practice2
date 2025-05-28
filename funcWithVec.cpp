@@ -48,7 +48,7 @@ string Decrypt(const vector<pair<int, int>>& ciphertext, int x, int p) {
         int s = BinCheck(a, x, p);
         int s_inv = BinCheck(s, p - 2, p); 
         int m = (b * s_inv) % p;
-        decryptedText += (char)m;
+        decryptedText += static_cast<char>(m);
     }
     return decryptedText;
 }
@@ -85,3 +85,6 @@ bool Primitive(int g, int p){
     }
     return true;
 }
+
+
+
